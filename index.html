@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arkanoid Game | Vanilla</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="index.js" defer></script>
+  </head>
+  <body>
+    <section>
+      <aside>
+        <label> Level: <span id="level">1</span> </label>
+        <label> Score: <span id="score">0</span> </label>
+        <label> Lives: <span id="lives">5</span> </label>
+        <button id="pause">Pause</button>
+      </aside>
+
+      <main>
+        <h1>Arkanoid Game</h1>
+        <canvas></canvas>
+
+        <img
+          hidden
+          id="sprite"
+          src="./assets/sprite.png"
+          alt="Sprite Arkanoid"
+        />
+        <img
+          hidden
+          id="bricks"
+          src="./assets/bricks.png"
+          alt="Sprite Bricks Arkanoid"
+        />
+      </main>
+    </section>
+  </body>
+</html>
