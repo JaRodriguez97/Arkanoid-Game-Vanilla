@@ -7,6 +7,12 @@ const canvas = document.querySelector("canvas"),
   $score = document.getElementById("score"),
   $lives = document.getElementById("lives");
 
+let isAnimate = false;
+let startX;
+let pullDeltaX;
+let isTouching;
+let isTouchMoving;
+
 canvas.width = innerWidth >= 768 ? innerWidth / 2 : innerWidth;
 canvas.height = (innerHeight / 4) * 3;
 
@@ -165,7 +171,19 @@ resetPosition = () => {
 };
 
 paddleMovement = () => {
-  if (paddle.leftPressed && paddle.x > 0) paddle.x -= paddle.SENSITIVITY;
+  if (typeof pullDeltaX != "undefined") {
+    const sensi =
+      (pullDeltaX > 3 || pullDeltaX < -3 ? pullDeltaX / 2 : pullDeltaX) /
+      paddle.SENSITIVITY;
+
+    if (paddle.leftPressed) {
+      if (paddle.x + sensi >= 0) paddle.x += sensi;
+      else paddle.x = 0;
+    } else if (paddle.rightPressed) {
+      if (paddle.x + sensi <= canvas.width - paddle.width) paddle.x += sensi;
+      else paddle.x = canvas.width - paddle.width;
+    }
+  } else if (paddle.leftPressed && paddle.x > 0) paddle.x -= paddle.SENSITIVITY;
   else if (paddle.rightPressed && paddle.x < canvas.width - paddle.width)
     paddle.x += paddle.SENSITIVITY;
 };
@@ -178,7 +196,59 @@ TogglePausedGame = () => {
   pausedGame = !pausedGame;
 };
 
+onMove = (event) => {
+  const currentX = event.touches[0].pageX;
+
+  pullDeltaX = currentX - startX;
+
+  if (pullDeltaX === 0) return;
+
+  isAnimate = true;
+  isTouchMoving = true;
+
+  if (isTouching && isTouchMoving) {
+    if (pullDeltaX > 0) {
+      paddle.rightPressed = true;
+      paddle.leftPressed = false;
+    } else if (pullDeltaX < 0) {
+      paddle.rightPressed = false;
+      paddle.leftPressed = true;
+    }
+  } else if (
+    typeof isTouching != "undefined" &&
+    typeof isTouchMoving != "undefined" &&
+    (!isTouching || !isTouchMoving)
+  ) {
+    paddle.rightPressed = false;
+    paddle.leftPressed = false;
+  }
+};
+
+startDrag = ({ touches: [{ pageX }] }) => {
+  isTouching = true;
+
+  if (isAnimate) return;
+  pullDeltaX = 0;
+
+  startX = pageX;
+
+  document.addEventListener("touchmove", onMove, { passive: true });
+  document.addEventListener("touchend", onEnd, { passive: true });
+};
+
+onEnd = () => {
+  document.removeEventListener("touchmove", onMove, { passive: true });
+  document.removeEventListener("touchend", onEnd, { passive: true });
+  isAnimate = false;
+  pullDeltaX = undefined;
+
+  paddle.rightPressed = false;
+  paddle.leftPressed = false;
+};
+
 initEvents = () => {
+  document.addEventListener("touchstart", startDrag, { passive: true });
+
   document.addEventListener("keydown", keyDownHandler);
   document.addEventListener("keyup", keyUpHandler);
   $pausedBtn.addEventListener("click", TogglePausedGame);

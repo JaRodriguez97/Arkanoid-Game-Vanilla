@@ -6,7 +6,7 @@
 
 body {
   background-color: #111;
-  height: 100vh;
+  height: 100svh;
   width: 100vw;
   overflow: hidden;
 }
@@ -41,7 +41,7 @@ main {
   flex-direction: column;
   width: 70%;
   height: fit-content;
-  max-height: 90vh;
+  max-height: 90svh;
   border-radius: 20px;
   color: #fff;
   padding: 1em;
