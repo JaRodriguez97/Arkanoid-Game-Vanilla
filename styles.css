@@ -87,6 +87,10 @@ main canvas {
     padding: 0;
   }
 
+  main h1 {
+    font-size: 2em;
+  }
+
   main canvas {
     height: 100%;
     width: 100%;
